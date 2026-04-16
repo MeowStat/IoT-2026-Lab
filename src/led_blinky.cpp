@@ -1,6 +1,5 @@
 #include "led_blinky.h"
 
-// Morse code dictionary (A-Z 0-9)
 const char* morseDictionary[] = {
   ".-",     // A
   "-...",   // B
@@ -40,14 +39,12 @@ const char* morseDictionary[] = {
   "----."   // 9
 };
 
-// Morse code timing (in milliseconds)
-#define DOT_DURATION 100      // Short blink (dit)
-#define DASH_DURATION 300     // Long blink (dah) = 3x dot
-#define GAP_IN_CHAR 100       // Gap within character
-#define GAP_BETWEEN_CHAR 300  // Gap between characters = 3x dot
-#define GAP_BETWEEN_WORD 700  // Gap between words = 7x dot
+#define DOT_DURATION 100      
+#define DASH_DURATION 300     
+#define GAP_IN_CHAR 100       
+#define GAP_BETWEEN_CHAR 300  
+#define GAP_BETWEEN_WORD 700  
 
-// Get morse code for a character (A-Z, 0-9)
 const char* getMorseCode(char c) {
   if (c >= 'A' && c <= 'Z') {
     return morseDictionary[c - 'A'];
@@ -59,16 +56,14 @@ const char* getMorseCode(char c) {
   return NULL;
 }
 
-// Blink a single morse character
+
 void blinkMorseChar(const char* morse) {
   for (int i = 0; morse[i] != '\0'; i++) {
     if (morse[i] == '.') {
-      // Dot: short blink
       digitalWrite(LED_GPIO, HIGH);
       vTaskDelay(pdMS_TO_TICKS(DOT_DURATION));
       digitalWrite(LED_GPIO, LOW);
     } else if (morse[i] == '-') {
-      // Dash: long blink
       digitalWrite(LED_GPIO, HIGH);
       vTaskDelay(pdMS_TO_TICKS(DASH_DURATION));
       digitalWrite(LED_GPIO, LOW);
@@ -81,7 +76,6 @@ void blinkMorseChar(const char* morse) {
   }
 }
 
-// Task to blink message in morse code
 void led_blinky(void *pvParameters) {
   pinMode(LED_GPIO, OUTPUT);
   digitalWrite(LED_GPIO, LOW);
@@ -90,17 +84,13 @@ void led_blinky(void *pvParameters) {
   
   while (1) {
     if (message == NULL) {
-      // Default message if none provided
       message = "HELLO";
     }
     
-    // Transmit each character
     for (int i = 0; message[i] != '\0'; i++) {
       if (message[i] == ' ') {
-        // Word gap
         vTaskDelay(pdMS_TO_TICKS(GAP_BETWEEN_WORD));
       } else {
-        // Get morse code for character
         const char* morse = getMorseCode(message[i]);
         if (morse != NULL) {
           blinkMorseChar(morse);
@@ -110,7 +100,6 @@ void led_blinky(void *pvParameters) {
       }
     }
     
-    // Wait before repeating message
     vTaskDelay(pdMS_TO_TICKS(2000));
   }
 }
