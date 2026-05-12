@@ -1,6 +1,6 @@
 #include "task_webserver.h"
 
-AsyncWebServer server(80);
+AsyncWebServer webServer(80);
 AsyncWebSocket ws("/ws");
 
 bool webserver_isrunning = false;
@@ -45,22 +45,22 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
 void connnectWSV()
 {
     ws.onEvent(onEvent);
-    server.addHandler(&ws);
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+    webServer.addHandler(&ws);
+    webServer.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(LittleFS, "/index.html", "text/html"); });
-    server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request)
+    webServer.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(LittleFS, "/script.js", "application/javascript"); });
-    server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request)
+    webServer.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(LittleFS, "/styles.css", "text/css"); });
-    server.begin();
-    ElegantOTA.begin(&server);
+    webServer.begin();
+    ElegantOTA.begin(&webServer);
     webserver_isrunning = true;
 }
 
 void Webserver_stop()
 {
     ws.closeAll();
-    server.end();
+    webServer.end();
     webserver_isrunning = false;
 }
 
