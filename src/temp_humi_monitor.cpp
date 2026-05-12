@@ -1,32 +1,30 @@
 #include "temp_humi_monitor.h"
 
-DHT20 dht20;
+DHT dht(DHT_PIN, DHT11);
 LiquidCrystal_I2C lcd(33, 16, 2);
 
 void temp_humi_monitor(void *pvParameters) {
   Serial.println("[Temp/Humidity Monitor] Starting...");
-  
-  Wire.begin(11, 12);
-  dht20.begin();
-  
+
+  // Wire.begin(11, 12);
+  dht.begin();
+
   lcd.begin();
   lcd.backlight();
   lcd.clear();
-  
+
   Serial.println("[Temp/Humidity Monitor] LCD initialized");
-  Serial.println("[Temp/Humidity Monitor] DHT20 sensor ready");
+  Serial.println("[Temp/Humidity Monitor] DHT11 sensor ready");
 
   while (1) {
-    dht20.read();
-    
-    float temperature = dht20.getTemperature();
-    float humidity = dht20.getHumidity();
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
 
     if (isnan(temperature) || isnan(humidity)) {
-      Serial.println("[Temp/Humidity Monitor] Failed to read from DHT20!");
-      
+      Serial.println("[Temp/Humidity Monitor] Failed to read from DHT11!");
+
       lcd.setCursor(0, 0);
-      lcd.print("Error: DHT20    ");
+      lcd.print("Error: DHT11    ");
       lcd.setCursor(0, 1);
       lcd.print("Read failed     ");
       

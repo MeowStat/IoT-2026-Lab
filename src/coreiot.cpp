@@ -1,8 +1,8 @@
 #include "coreiot.h"
 
 // ----------- CONFIGURE THESE! -----------
-const char* coreIOT_Server = "10.235.76.226";  
-const char* coreIOT_Token = "g7drm1amhd3dchr379xu";   // Device Access Token
+const char* coreIOT_Server = "app.coreiot.io";  
+const char* coreIOT_Token = "AnGdNEIQNZjoIejnBilZ";   // Device Access Token
 const int   mqttPort = 1883;
 // ----------------------------------------
 
@@ -16,10 +16,10 @@ void reconnect() {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect (username=token, password=empty)
     //if (client.connect("ESP32Client", coreIOT_Token, NULL)) {
-    String clientId = "ESP32Client-";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "IOT02";
+    // clientId += String(random(0xffff), HEX);
 
-    if (client.connect(clientId.c_str())) {
+    if (client.connect(clientId.c_str(), "IOT02", "12345678")) {
         
       Serial.println("connected to CoreIOT Server!");
       client.subscribe("v1/devices/me/rpc/request/+");
@@ -80,16 +80,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 void setup_coreiot(){
-
-  //Serial.print("Connecting to WiFi...");
-  //WiFi.begin(wifi_ssid, wifi_password);
-  //while (WiFi.status() != WL_CONNECTED) {
-  
-  // while (isWifiConnected == false) {
-  //   delay(500);
-  //   Serial.print(".");
-  // }
-
   while(1){
     if (xSemaphoreTake(xBinarySemaphoreInternet, portMAX_DELAY)) {
       break;
@@ -106,7 +96,7 @@ void setup_coreiot(){
 
 }
 
-void coreiot_task(void *pvParameters){
+void coreiot_task(void *pvParameters) {
 
     setup_coreiot();
 
