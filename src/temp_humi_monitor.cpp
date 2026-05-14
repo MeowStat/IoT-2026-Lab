@@ -30,14 +30,14 @@ void temp_humi_monitor(void *pvParameters) {
       
       temperature = humidity = -1;
     } else {
-      glob_temperature = temperature;
-      glob_humidity = humidity;
+      SensorData_t data = { temperature, humidity };
+      xQueueOverwrite(xSensorQueue, &data);
 
-      Serial.print("[Temp/Humidity Monitor] Temp: ");
-      Serial.print(temperature);
-      Serial.print("°C  Humidity: ");
-      Serial.print(humidity);
-      Serial.println("%");
+      // Serial.print("[Temp/Humidity Monitor] Temp: ");
+      // Serial.print(temperature);
+      // Serial.print("°C  Humidity: ");
+      // Serial.print(humidity);
+      // Serial.println("%");
       
       lcd.setCursor(0, 0);
       lcd.print("Temp:");

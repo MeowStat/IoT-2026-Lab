@@ -15,8 +15,10 @@ bool connecting = false;
 unsigned long last_wifi_status_log_ms = 0;
 
 String mainPage() {
-  float temperature = glob_temperature;
-  float humidity = glob_humidity;
+  SensorData_t sensorData;
+  xQueuePeek(xSensorQueue, &sensorData, 0);
+  float temperature = sensorData.temperature;
+  float humidity = sensorData.humidity;
   String led1 = led1_state ? "ON" : "OFF";
   String led2 = led2_state ? "ON" : "OFF";
 
@@ -449,8 +451,10 @@ void handleToggle()
 
 void handleSensors()
 {
-  float t = glob_temperature;
-  float h = glob_humidity;
+  SensorData_t sensorData;
+  xQueuePeek(xSensorQueue, &sensorData, 0);
+  float t = sensorData.temperature;
+  float h = sensorData.humidity;
   String json = "{\"temp\":" + String(t) + ",\"hum\":" + String(h) + "}";
   mainServer.send(200, "application/json", json);
 }
@@ -509,7 +513,9 @@ void setupServer()
 void startAccessPoint()
 {
   WiFi.mode(WIFI_AP);
+  xSemaphoreTake(xMutexWifi, portMAX_DELAY);
   WiFi.softAP(ssid.c_str(), password.c_str());
+  xSemaphoreGive(xMutexWifi);
   Serial.print("AP IP address: ");
   Serial.println(WiFi.softAPIP());
   isAPMode = true;
