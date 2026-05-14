@@ -582,7 +582,6 @@ void main_server_task(void *pvParameters)
       }
     }
 
-    // STA Mode
     if (connecting)
     {
       uint8_t wifiStatus = WiFi.status();
