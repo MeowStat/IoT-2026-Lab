@@ -1,7 +1,4 @@
 #include "global.h"
-float glob_temperature = 0;
-float glob_humidity = 0;
-
 bool led1_state = false;
 bool led2_state = false;
 
@@ -16,4 +13,6 @@ String password = "12345678";
 String wifi_ssid;
 String wifi_password;
 boolean isWifiConnected = false;
+QueueHandle_t xSensorQueue = xQueueCreate(1, sizeof(SensorData_t));
 SemaphoreHandle_t xBinarySemaphoreInternet = xSemaphoreCreateBinary();
+SemaphoreHandle_t xMutexWifi = xSemaphoreCreateMutex();
